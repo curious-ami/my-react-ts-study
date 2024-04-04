@@ -1,39 +1,11 @@
-import { useEffect, useState } from "react";
-import getCount from "../components/gg";
+import useData from "./useData";
+import { Genre } from "./useGenres";
 
-const useGames = ()=> {
-  const [games, setGames] = useState<Game []>([]);
-  const [error, setError] = useState("");
-  const [isLoading, setLoading] = useState(false)
-
-  useEffect(() => {
-    console.log("useEffect", getCount(), games);
-    const controller = new AbortController();
-
-    setLoading(true);
-    (async () => {
-      const fetchGame = await fetch(
-        "https://api.rawg.io/api/games?key=481d5ccab6394e1d88e9853405c7a39a&dates=2020-09-01,2024-01-01&platforms=18,1,7",
-        { method: "get", signal: controller.signal },
-      );
-      
-      if (!fetchGame.ok) {
-        setError(`error, status: ${fetchGame.status}`);
-        setLoading(false);
-        return;
-      }
-      const { results } = (await fetchGame.json()) as FetchGameResponse;
-      setGames(results);
-      setLoading(false);
-    })();
-    return () => controller.abort();
-  }, []);
-  return {games, error, isLoading}
-}
+const useGames = (selectedGenre: Genre|null)=> useData<Game>('games', {params:{genres: selectedGenre?.id}}, [selectedGenre?.id]);
 
 export default useGames;
 export type Game = FetchGameResponse['results'][number];
-export type Platform = Game['platforms'][number]['platform']
+export type Platform = Game['platforms'][number]['platform'];
 
 type FetchGameResponse = {
     count: number;
