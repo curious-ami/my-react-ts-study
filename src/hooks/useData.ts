@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-type Endpoint = 'genres'|'games';
+type Endpoint = 'genres'|'games'|'platforms/lists/parents';
 type RequestConfig = {params: {
   genres: number | undefined;
 }}
